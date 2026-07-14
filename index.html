@@ -28,7 +28,31 @@
     font-family:'IBM Plex Sans', sans-serif;
   }
   h1,h2,h3{ font-family:'Fraunces', serif; font-weight:600; margin:0 0 8px; }
-  .app{ max-width:920px; margin:0 auto; padding:28px 20px 64px; }
+  .app-shell{ display:flex; min-height:100vh; }
+  .sidebar{
+    width:200px; flex-shrink:0; background:var(--surface); border-right:1px solid var(--border);
+    padding:24px 14px; display:flex; flex-direction:column; gap:6px;
+  }
+  .sidebar-title{ font-family:'Fraunces', serif; font-weight:600; font-size:15px; margin-bottom:10px; padding:0 8px; }
+  .outil-btn{
+    background:none; border:none; color:var(--muted); text-align:left; padding:10px 8px;
+    border-radius:6px; font-family:'IBM Plex Sans'; font-size:13px; font-weight:500; cursor:pointer;
+  }
+  .outil-btn:hover{ background:var(--surface-2); color:var(--text); }
+  .outil-btn.active{ background:var(--surface-2); color:var(--text); font-weight:600; border-left:2px solid var(--needs); }
+  .sidebar-note{ font-size:11px; color:var(--muted); padding:10px 8px 0; font-style:italic; }
+  .sidebar .storage-badge{ margin-top:auto; align-self:flex-start; }
+  .main-content{ flex:1; min-width:0; }
+  .outil-panel{ display:none; max-width:920px; margin:0 auto; padding:28px 20px 64px; }
+  .outil-panel.active{ display:block; }
+  @media (max-width: 720px){
+    .app-shell{ flex-direction:column; }
+    .sidebar{ width:100%; flex-direction:row; align-items:center; padding:12px 14px; overflow-x:auto; border-right:none; border-bottom:1px solid var(--border); }
+    .sidebar-title{ display:none; }
+    .sidebar-note{ display:none; }
+    .outil-btn.active{ border-left:none; border-bottom:2px solid var(--needs); }
+    .sidebar .storage-badge{ margin-top:0; margin-left:auto; }
+  }
 
   .header{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:8px; }
   .storage-badge{ font-size:12px; padding:4px 10px; border-radius:12px; white-space:nowrap; }
@@ -216,6 +240,11 @@
   .category-detail-row{ display:flex; justify-content:space-between; gap:8px; font-size:12px; color:var(--muted); padding:3px 0; }
   .category-detail-name{ flex:1; }
   .category-detail-amount{ font-family:'IBM Plex Mono'; }
+  .category-detail-row-expandable{ cursor:pointer; }
+  .category-detail-row-expandable:hover{ color:var(--text); }
+  .expand-arrow-sm{ color:var(--muted); font-size:9px; width:9px; flex-shrink:0; }
+  .category-subdetail-list{ padding-left:20px; display:flex; flex-direction:column; gap:2px; margin-bottom:4px; }
+  .category-subdetail-row{ display:flex; justify-content:space-between; gap:8px; font-size:11px; color:var(--muted); padding:2px 0; }
   .category-list > *:last-child{ border-bottom:none; }
   .category-row-name{ flex:1; }
   .category-row-amount{ font-family:'IBM Plex Mono'; }
@@ -236,8 +265,61 @@
   .budget-row-name{ flex:1; min-width:160px; font-size:13px; }
   .budget-row-avg{ font-size:12px; color:var(--muted); min-width:150px; }
   .budget-input-wrap{ display:flex; align-items:center; gap:8px; }
+
+  .inline-money-input{ width:110px; text-align:right; font-family:'IBM Plex Mono'; }
   .budget-input{ width:100px; font-family:'IBM Plex Mono'; }
   .budget-mode-tag{ font-size:11px; color:var(--muted); white-space:nowrap; min-width:90px; }
+  .budget-use-avg-btn{ font-size:11px; padding:6px 10px; white-space:nowrap; }
+
+  .replenish-grid{ display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+  .replenish-item{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:6px 0; border-bottom:1px solid var(--border); font-size:13px; }
+  .replenish-item:last-child{ border-bottom:none; }
+  .replenish-value{ font-family:'IBM Plex Mono'; font-weight:600; }
+  .replenish-total{ margin-top:4px; padding-top:12px; border-top:1px solid var(--border); }
+  .replenish-item-expandable{ cursor:pointer; user-select:none; }
+  .replenish-item-expandable:hover{ opacity:0.85; }
+  .replenish-item-expandable .replenish-label{ display:flex; align-items:center; gap:6px; }
+  .replenish-total .replenish-label{ font-family:'Fraunces', serif; font-weight:600; font-size:15px; color:var(--text); }
+  .replenish-total .replenish-value{ font-size:22px; color:var(--needs); }
+
+  .budget-subheading{
+    font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted);
+    font-weight:600; margin:20px 0 8px;
+  }
+  .budget-subheading:first-of-type{ margin-top:14px; }
+  .replenish-final{ background:rgba(91,140,123,0.08); border-radius:8px; padding:12px 14px; margin-top:6px; }
+  .replenish-final .replenish-label{ font-size:16px; }
+  .replenish-final .replenish-value{ font-size:26px; }
+
+  .income-split-rows{ display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+  .income-split-row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .income-name-input{ flex:1; min-width:140px; }
+
+  .cash-position-inputs{ display:flex; gap:16px; flex-wrap:wrap; margin-top:14px; }
+
+  .bills-list{ display:flex; flex-direction:column; gap:2px; margin-bottom:12px; }
+  .bill-row{
+    display:flex; align-items:center; gap:10px; padding:7px 0; border-bottom:1px solid var(--border); font-size:13px;
+  }
+  .bill-row:last-child{ border-bottom:none; }
+  .bill-desc{ flex:1; }
+  .bill-due{ font-size:11px; color:var(--muted); white-space:nowrap; }
+  .bill-amount{ font-family:'IBM Plex Mono'; font-weight:600; white-space:nowrap; }
+  .add-bill-row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .add-bill-row input[type=text]{ flex:1; min-width:160px; }
+
+  .goal-card{
+    position:relative; background:var(--surface-2); border:1px solid var(--border); border-radius:8px;
+    padding:12px 34px 12px 14px; margin-bottom:10px;
+  }
+  .goal-card .icon-btn{ position:absolute; top:8px; right:8px; }
+  .goal-card-header{ display:flex; justify-content:space-between; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
+  .goal-title{ font-weight:600; font-size:14px; }
+  .goal-target{ font-family:'IBM Plex Mono'; font-size:12px; color:var(--muted); }
+  .goal-progress-track{ height:8px; background:var(--track); border-radius:4px; overflow:hidden; }
+  .goal-progress-fill{ height:100%; background:var(--needs); border-radius:4px; transition:width .3s; }
+  .goal-progress-label{ font-size:11px; color:var(--muted); margin-top:6px; font-family:'IBM Plex Mono'; }
+  .goal-note{ font-size:12px; color:var(--muted); margin-top:6px; font-style:italic; }
 
   .trend-chart{ width:100%; height:auto; margin-top:6px; }
   .trend-month-group{ cursor:pointer; }
@@ -323,14 +405,25 @@
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app-shell">
+
+  <div class="sidebar">
+    <div class="sidebar-title">Mes outils</div>
+    <button class="outil-btn active" data-outil="budget">💰 Budget couple</button>
+    <button class="outil-btn" data-outil="trading">📈 Trading - Luis</button>
+    <div class="sidebar-note">D'autres outils à venir...</div>
+    <span class="storage-badge" id="storageBadge"></span>
+  </div>
+
+  <div class="main-content">
+
+  <div class="outil-panel active" id="outil-budget">
 
   <div class="header">
     <div>
       <h1>Budget mensuel</h1>
       <div class="subtitle">Importe tes relevés, on classe, on suit la règle 50-30-20.</div>
     </div>
-    <span class="storage-badge" id="storageBadge"></span>
   </div>
 
   <div class="tabs">
@@ -474,7 +567,23 @@
     <div id="annualContent"></div>
   </div>
 
-</div>
+  </div><!-- /outil-budget -->
+
+  <div class="outil-panel" id="outil-trading">
+    <div class="header">
+      <div>
+        <h1>Trading</h1>
+        <div class="subtitle">Suivi de ton compte de trading : dépôts, retraits, valeur actuelle et objectifs. Indépendant du budget du ménage.</div>
+      </div>
+    </div>
+    <div class="tabs" id="tradingTabs"></div>
+    <div id="tradingContent"></div>
+    <input type="file" id="tradeZellaCsvFile" accept=".csv" style="display:none">
+  </div><!-- /outil-trading -->
+
+  </div><!-- /main-content -->
+
+</div><!-- /app-shell -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
@@ -631,7 +740,12 @@ let appData = {
   rules: JSON.parse(JSON.stringify(DEFAULT_RULES)),
   transactions: [],
   lastImportBatchId: null,
-  budgets: {}
+  budgets: {},
+  cushionAmount: 600,
+  incomeSplit: { person1: { name: "Toi", biweekly: 0 }, person2: { name: "Ta conjointe", biweekly: 0 } },
+  cashPosition: { currentBalance: 0, reserved: 0 },
+  upcomingBills: [],
+  trading: { accountStats: {}, movements: [], goals: [], trades: [] }
 };
 
 let pendingCandidates = []; // transactions extraites en attente de validation
@@ -650,7 +764,7 @@ function mergeAppData(parsed) {
   // nouvelles catégories/règles par défaut qui n'existent pas encore chez lui —
   // pour qu'une mise à jour de l'outil (ex: nouvelle catégorie) s'applique aussi
   // aux utilisateurs qui ont déjà des données sauvegardées.
-  const merged = Object.assign({ accounts: [], categories: [], rules: [], transactions: [], lastImportBatchId: null, budgets: {} }, parsed);
+  const merged = Object.assign({ accounts: [], categories: [], rules: [], transactions: [], lastImportBatchId: null, budgets: {}, cushionAmount: 600, incomeSplit: { person1: { name: "Toi", biweekly: 0 }, person2: { name: "Ta conjointe", biweekly: 0 } }, cashPosition: { currentBalance: 0, reserved: 0 }, upcomingBills: [], trading: { accountStats: {}, movements: [], goals: [], trades: [] } }, parsed);
 
   const existingCatIds = new Set(merged.categories.map(c => c.id));
   DEFAULT_CATEGORIES.forEach(c => {
@@ -661,6 +775,36 @@ function mergeAppData(parsed) {
   DEFAULT_RULES.forEach(r => {
     if (!existingKeywords.has(r.keyword.toUpperCase())) merged.rules.push(JSON.parse(JSON.stringify(r)));
   });
+
+  // Sécurité de structure pour les données de trading (comptes multiples,
+  // profit/échange/commission par compte façon relevé MT5).
+  if (!merged.trading) merged.trading = { accountStats: {}, movements: [], goals: [], trades: [] };
+  if (!merged.trading.movements) merged.trading.movements = [];
+  if (!merged.trading.goals) merged.trading.goals = [];
+  if (!merged.trading.trades) merged.trading.trades = [];
+  if (!merged.trading.accountStats) merged.trading.accountStats = {};
+  // Mouvements créés avant le support multi-comptes : assigner au premier compte connu
+  const anyKnownAcct = merged.trading.trades.find(t => t.account) || merged.trading.movements.find(m => m.account);
+  if (anyKnownAcct) {
+    const fallbackAcct = anyKnownAcct.account;
+    merged.trading.movements.forEach(m => { if (!m.account) m.account = fallbackAcct; });
+  }
+
+  // Données de départ (en euro) pour le compte Axi Perso, injectées une seule fois
+  // si les données de trading sont complètement vides (ex: juste après réinitialisation).
+  if (merged.trading.movements.length === 0 && merged.trading.trades.length === 0 && Object.keys(merged.trading.accountStats).length === 0) {
+    const acct = "MT5 2594 - Axi Perso";
+    merged.trading.movements = [
+      { id: uid("move"), account: acct, type: "depot", date: "2026-03-01", amount: 996.50, note: "" },
+      { id: uid("move"), account: acct, type: "depot", date: "2026-03-02", amount: 199.88, note: "" },
+      { id: uid("move"), account: acct, type: "retrait", date: "2026-03-02", amount: 199.86, note: "" },
+      { id: uid("move"), account: acct, type: "depot", date: "2026-04-22", amount: 499.75, note: "" },
+      { id: uid("move"), account: acct, type: "depot", date: "2026-05-25", amount: 999.25, note: "" },
+      { id: uid("move"), account: acct, type: "retrait", date: "2026-06-02", amount: 999.19, note: "" },
+      { id: uid("move"), account: acct, type: "retrait", date: "2026-06-09", amount: 299.85, note: "" },
+      { id: uid("move"), account: acct, type: "retrait", date: "2026-06-15", amount: 499.74, note: "" }
+    ];
+  }
 
   return merged;
 }
@@ -1139,15 +1283,25 @@ function availableYears() {
   return Array.from(set).sort();
 }
 
+function currentYearMonth() {
+  // Le mois calendaire réel en cours — toujours exclu des moyennes, puisqu'un
+  // mois partiellement écoulé (ex: 7 jours sur 30) ferait chuter artificiellement
+  // la moyenne s'il était compté comme un mois complet.
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+}
+
 function averageByCategory(txs) {
   // Calcule, pour un ensemble de transactions donné, le montant moyen par mois
-  // et par catégorie — basé sur le nombre de mois distincts réellement présents
-  // dans ces transactions (pas toujours 12, surtout en début d'année ou avec un
-  // historique partiel).
+  // et par catégorie — basé sur le nombre de mois COMPLETS distincts (le mois
+  // calendaire en cours est toujours exclu, car incomplet et donc trompeur).
+  const currentYm = currentYearMonth();
   const byCat = {};
   const monthsSet = new Set();
   txs.forEach(t => {
-    monthsSet.add(t.date.slice(0, 7));
+    const ym = t.date.slice(0, 7);
+    if (ym === currentYm) return;
+    monthsSet.add(ym);
     const catId = t.categoryId || "non_classe";
     byCat[catId] = (byCat[catId] || 0) + t.amount;
   });
@@ -1155,6 +1309,23 @@ function averageByCategory(txs) {
   const avg = {};
   Object.entries(byCat).forEach(([id, total]) => { avg[id] = total / monthsCount; });
   return { avg, monthsCount };
+}
+
+function averageByDescriptionForCategory(categoryId, monthsCount) {
+  // Répartit la moyenne mensuelle d'une catégorie par marchand/description
+  // (ex: "Services publics & télécom" -> Bell vs Hydro-Québec séparément),
+  // en excluant aussi le mois en cours (incomplet) pour rester cohérent avec
+  // le monthsCount fourni (qui l'exclut déjà).
+  const currentYm = currentYearMonth();
+  const byDesc = {};
+  appData.transactions.forEach(t => {
+    if ((t.categoryId || "non_classe") !== categoryId) return;
+    if (t.date.slice(0, 7) === currentYm) return;
+    byDesc[t.description] = (byDesc[t.description] || 0) + t.amount;
+  });
+  const result = {};
+  Object.entries(byDesc).forEach(([desc, total]) => { result[desc] = total / monthsCount; });
+  return result;
 }
 
 
@@ -1186,6 +1357,15 @@ function addAccount(name) {
 
 /* ===================== Onglets ===================== */
 
+let currentOutil = "budget";
+
+function switchOutil(outil) {
+  currentOutil = outil;
+  document.querySelectorAll(".outil-btn").forEach(b => b.classList.toggle("active", b.dataset.outil === outil));
+  document.querySelectorAll(".outil-panel").forEach(p => p.classList.toggle("active", p.id === "outil-" + outil));
+  if (outil === "trading") renderTradingPanel();
+}
+
 function switchTab(tab) {
   currentTab = tab;
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
@@ -1196,6 +1376,687 @@ function switchTab(tab) {
   if (tab === "budget") renderBudgetPanel();
   if (tab === "monthly") renderMonthlyPanel();
   if (tab === "annual") renderAnnualPanel();
+}
+
+/* ===================== Trading ===================== */
+
+const TRADING_TERMS = [
+  { key: "court", label: "Court terme" },
+  { key: "moyen", label: "Moyen terme" },
+  { key: "long", label: "Long terme" }
+];
+
+function getKnownTradingAccounts() {
+  const set = new Set();
+  appData.trading.trades.forEach(t => { if (t.account) set.add(t.account); });
+  appData.trading.movements.forEach(m => { if (m.account) set.add(m.account); });
+  Object.keys(appData.trading.accountStats || {}).forEach(a => set.add(a));
+  return Array.from(set).sort();
+}
+
+function getAccountStats(accountName) {
+  const s = appData.trading.accountStats[accountName];
+  return s || { profit: 0, swap: 0, commission: 0 };
+}
+
+function computeTradingStatsForAccount(accountName) {
+  // accountName === null -> combiné (tous les comptes ensemble)
+  const movements = accountName ? appData.trading.movements.filter(m => m.account === accountName) : appData.trading.movements;
+  const trades = accountName ? appData.trading.trades.filter(t => t.account === accountName) : appData.trading.trades;
+
+  const totalDeposits = movements.filter(m => m.type === "depot").reduce((a, m) => a + m.amount, 0);
+  const totalWithdrawals = movements.filter(m => m.type === "retrait").reduce((a, m) => a + m.amount, 0);
+  const netInvested = totalDeposits - totalWithdrawals;
+
+  let profit, swap, commission;
+  if (accountName) {
+    const s = getAccountStats(accountName);
+    profit = s.profit || 0; swap = s.swap || 0; commission = s.commission || 0;
+  } else {
+    const accounts = getKnownTradingAccounts();
+    profit = accounts.reduce((a, acc) => a + (getAccountStats(acc).profit || 0), 0);
+    swap = accounts.reduce((a, acc) => a + (getAccountStats(acc).swap || 0), 0);
+    commission = accounts.reduce((a, acc) => a + (getAccountStats(acc).commission || 0), 0);
+  }
+
+  const solde = totalDeposits - totalWithdrawals + profit + swap - commission;
+  const gainLoss = profit + swap - commission;
+  const gainLossPct = netInvested > 0 ? (gainLoss / netInvested) * 100 : 0;
+
+  const wins = trades.filter(t => t.status.toLowerCase() === "win");
+  const losses = trades.filter(t => t.status.toLowerCase() === "loss");
+  const breakEvens = trades.filter(t => {
+    const s = t.status.toLowerCase();
+    return s !== "win" && s !== "loss";
+  });
+  const totalNetPnl = trades.reduce((a, t) => a + t.netPnl, 0);
+  // Comme TradeZella : le taux de réussite exclut les trades "Break Even" du
+  // dénominateur (gagnants+perdants seulement), plutôt que de diviser par le total.
+  const decidedCount = wins.length + losses.length;
+  const winRate = decidedCount > 0 ? (wins.length / decidedCount) * 100 : 0;
+
+  return {
+    totalDeposits, totalWithdrawals, netInvested, profit, swap, commission, solde, gainLoss, gainLossPct,
+    tradesCount: trades.length, winsCount: wins.length, lossesCount: losses.length,
+    breakEvenCount: breakEvens.length, winRate, totalNetPnl
+  };
+}
+
+function computeTradingTotals() {
+  return computeTradingStatsForAccount(null);
+}
+
+let currentTradingTab = "summary";
+
+function switchTradingTab(tab) {
+  currentTradingTab = tab;
+  renderTradingPanel();
+}
+
+function renderTradingPanel() {
+  const tabsContainer = document.getElementById("tradingTabs");
+  const container = document.getElementById("tradingContent");
+  const accounts = getKnownTradingAccounts();
+
+  if (currentTradingTab !== "summary" && !accounts.includes(currentTradingTab)) {
+    currentTradingTab = "summary";
+  }
+
+  tabsContainer.innerHTML = "";
+  const summaryBtn = document.createElement("button");
+  summaryBtn.className = "tab-btn" + (currentTradingTab === "summary" ? " active" : "");
+  summaryBtn.textContent = "📋 Sommaire";
+  summaryBtn.addEventListener("click", () => switchTradingTab("summary"));
+  tabsContainer.appendChild(summaryBtn);
+
+  accounts.forEach(acc => {
+    const btn = document.createElement("button");
+    btn.className = "tab-btn" + (currentTradingTab === acc ? " active" : "");
+    btn.textContent = acc;
+    btn.addEventListener("click", () => switchTradingTab(acc));
+    tabsContainer.appendChild(btn);
+  });
+
+  container.innerHTML = "";
+  if (currentTradingTab === "summary") {
+    container.appendChild(buildTradeImportSection());
+    container.appendChild(buildTradingOverviewCombined());
+    if (accounts.length > 1) container.appendChild(buildTradeAccountsSummaryTable());
+    container.appendChild(buildTradingGoals(computeTradingTotals()));
+    container.appendChild(buildTradingResetSection());
+  } else {
+    container.appendChild(buildTradingOverviewForAccount(currentTradingTab));
+    container.appendChild(buildTradingMovements(currentTradingTab));
+    container.appendChild(buildTradeStatsSection(currentTradingTab));
+  }
+}
+
+let tradingResetPending = false;
+
+function buildTradingResetSection() {
+  const wrap = document.createElement("div");
+  wrap.className = "category-group-block";
+  wrap.innerHTML = `
+    <div class="category-group-title">🗑 Réinitialiser</div>
+    <div class="category-group-sub">Efface tous les comptes, mouvements, trades importés et objectifs de trading, pour repartir à zéro.</div>
+    <div class="backup-actions" style="margin-top:12px;">
+      <button class="btn-ghost" id="resetTradingBtn">🗑 Réinitialiser toutes les données Trading</button>
+    </div>
+    <div class="status-msg" id="resetTradingStatus"></div>
+  `;
+  wrap.querySelector("#resetTradingBtn").addEventListener("click", e => {
+    const btn = e.target;
+    const statusEl = wrap.querySelector("#resetTradingStatus");
+    if (!tradingResetPending) {
+      tradingResetPending = true;
+      btn.textContent = "Confirmer — tout effacer ?";
+      btn.classList.add("btn-danger-confirm");
+      statusEl.textContent = "Cette action est irréversible.";
+      statusEl.className = "status-msg error";
+      return;
+    }
+    appData.trading = { accountStats: {}, movements: [], goals: [], trades: [] };
+    saveData();
+    tradingResetPending = false;
+    currentTradingTab = "summary";
+    renderTradingPanel();
+  });
+  return wrap;
+}
+
+/* --- Import CSV TradeZella --- */
+
+function parseCsvLine(line) {
+  const result = [];
+  let cur = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (line[i + 1] === '"') { cur += '"'; i++; }
+        else { inQuotes = false; }
+      } else {
+        cur += c;
+      }
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ",") { result.push(cur); cur = ""; }
+      else cur += c;
+    }
+  }
+  result.push(cur);
+  return result;
+}
+
+function parseTradeZellaCsv(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+  if (lines.length < 2) return [];
+  const headers = parseCsvLine(lines[0]).map(h => h.trim());
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const values = parseCsvLine(lines[i]);
+    const row = {};
+    headers.forEach((h, idx) => { row[h] = values[idx] !== undefined ? values[idx] : ""; });
+    rows.push(row);
+  }
+  return rows;
+}
+
+function tradeZellaRowToTrade(row) {
+  const netPnl = parseFloat(row["Net P&L"]) || 0;
+  const grossPnl = parseFloat(row["Gross P&L"]) || 0;
+  const openDate = row["Open Date"] || "";
+  const openTime = row["Open Time"] || "";
+  const symbol = row["Symbol"] || row["Instrument"] || "";
+  const account = row["Account Name"] || "";
+  // Clé unique pour éviter les doublons si le même CSV est réimporté
+  const dedupeKey = [account, openDate, openTime, symbol, netPnl].join("|");
+  return {
+    id: uid("trade"),
+    dedupeKey,
+    account,
+    openDate,
+    openTime,
+    closeDate: row["Close Date"] || "",
+    closeTime: row["Close Time"] || "",
+    symbol,
+    side: (row["Side"] || "").toLowerCase(),
+    quantity: parseFloat(row["Quantity"]) || 0,
+    netPnl: netPnl,
+    grossPnl: grossPnl,
+    status: row["Status"] || "",
+    commission: parseFloat(row["Commission"]) || 0,
+    fee: parseFloat(row["Fee"]) || 0,
+    swap: parseFloat(row["Swap"]) || 0
+  };
+}
+
+function buildTradeImportSection() {
+  const wrap = document.createElement("div");
+  wrap.className = "category-group-block";
+  wrap.innerHTML = `
+    <div class="category-group-title">📥 Importer un CSV TradeZella</div>
+    <div class="category-group-sub">Trade Log → sélectionne tes trades → Bulk Actions → Export Trades to CSV. Les trades déjà importés ne seront pas dupliqués.</div>
+    <div class="backup-actions" style="margin-top:12px;">
+      <button class="btn-ghost" id="tradeZellaImportBtn">⬆ Importer un CSV TradeZella</button>
+    </div>
+    <div class="status-msg" id="tradeZellaImportStatus"></div>
+  `;
+
+  wrap.querySelector("#tradeZellaImportBtn").addEventListener("click", () => {
+    document.getElementById("tradeZellaCsvFile").click();
+  });
+
+  return wrap;
+}
+
+async function handleTradeZellaCsv(file) {
+  const statusEl = document.getElementById("tradeZellaImportStatus");
+  statusEl.textContent = "Lecture du fichier...";
+  statusEl.className = "status-msg";
+  try {
+    const text = await file.text();
+    const rows = parseTradeZellaCsv(text);
+    if (rows.length === 0) {
+      statusEl.textContent = "Aucune ligne trouvée dans ce fichier.";
+      statusEl.className = "status-msg error";
+      return;
+    }
+    const newTrades = rows.map(tradeZellaRowToTrade);
+    const existingKeys = new Set(appData.trading.trades.map(t => t.dedupeKey));
+    const toAdd = newTrades.filter(t => !existingKeys.has(t.dedupeKey));
+    const skipped = newTrades.length - toAdd.length;
+
+    appData.trading.trades = appData.trading.trades.concat(toAdd);
+    saveData();
+    renderTradingPanel();
+
+    let msg = `${toAdd.length} trade(s) importé(s).`;
+    if (skipped > 0) msg += ` ${skipped} déjà présent(s), ignoré(s).`;
+    document.getElementById("tradeZellaImportStatus").textContent = msg;
+    document.getElementById("tradeZellaImportStatus").className = "status-msg success";
+  } catch (e) {
+    console.error(e);
+    statusEl.textContent = "Impossible de lire ce fichier — vérifie que c'est bien un export CSV de TradeZella.";
+    statusEl.className = "status-msg error";
+  }
+}
+
+function buildTradeAccountsSummaryTable() {
+  const wrap = document.createElement("div");
+  wrap.className = "category-group-block";
+  wrap.innerHTML = `<div class="category-group-title">📊 Sommaire par compte</div>`;
+
+  const accounts = getKnownTradingAccounts();
+  const list = document.createElement("div");
+  list.className = "bills-list";
+  accounts.forEach(acc => {
+    const s = computeTradingStatsForAccount(acc);
+    const row = document.createElement("div");
+    row.className = "bill-row";
+    row.innerHTML = `
+      <span class="bill-desc">${escapeHtml(acc)} — ${s.tradesCount} trade(s), ${s.winRate.toFixed(0)}% de réussite</span>
+      <span class="bill-amount ${s.totalNetPnl >= 0 ? 'pos' : 'neg'}">${formatMoney(s.totalNetPnl)}</span>
+    `;
+    list.appendChild(row);
+  });
+  wrap.appendChild(list);
+  return wrap;
+}
+
+function buildTradeStatsSection(accountName) {
+  const wrap = document.createElement("div");
+  wrap.className = "category-group-block";
+  wrap.innerHTML = `<div class="category-group-title">📊 Statistiques des trades</div>`;
+
+  const trades = appData.trading.trades.filter(t => t.account === accountName);
+  if (trades.length === 0) {
+    wrap.innerHTML += '<p class="empty-msg">Aucun trade importé pour ce compte.</p>';
+    return wrap;
+  }
+
+  const wins = trades.filter(t => t.status.toLowerCase() === "win");
+  const losses = trades.filter(t => t.status.toLowerCase() === "loss");
+  const breakEvens = trades.filter(t => { const s = t.status.toLowerCase(); return s !== "win" && s !== "loss"; });
+  const totalNetPnl = trades.reduce((a, t) => a + t.netPnl, 0);
+  const decidedCount = wins.length + losses.length;
+  const winRate = decidedCount > 0 ? (wins.length / decidedCount) * 100 : 0;
+  const avgWin = wins.length > 0 ? wins.reduce((a, t) => a + t.netPnl, 0) / wins.length : 0;
+  const avgLoss = losses.length > 0 ? losses.reduce((a, t) => a + t.netPnl, 0) / losses.length : 0;
+  const grossWins = wins.reduce((a, t) => a + t.netPnl, 0);
+  const grossLosses = Math.abs(losses.reduce((a, t) => a + t.netPnl, 0));
+  const profitFactor = grossLosses > 0 ? grossWins / grossLosses : (grossWins > 0 ? Infinity : 0);
+
+  const grid = document.createElement("div");
+  grid.className = "annual-summary-grid";
+  grid.innerHTML = `
+    <div class="annual-summary-item">
+      <span class="annual-summary-label">Nombre de trades</span>
+      <span class="annual-summary-value">${trades.length}</span>
+    </div>
+    <div class="annual-summary-item">
+      <span class="annual-summary-label">Taux de réussite (BE exclus)</span>
+      <span class="annual-summary-value">${winRate.toFixed(2)}% (${wins.length}W / ${losses.length}L${breakEvens.length > 0 ? " / " + breakEvens.length + "BE" : ""})</span>
+    </div>
+    <div class="annual-summary-item">
+      <span class="annual-summary-label">P&L net total</span>
+      <span class="annual-summary-value ${totalNetPnl >= 0 ? 'pos' : 'neg'}">${formatMoney(totalNetPnl)}</span>
+    </div>
+    <div class="annual-summary-item">
+      <span class="annual-summary-label">Gain moyen / Perte moyenne</span>
+      <span class="annual-summary-value">${formatMoney(avgWin)} / ${formatMoney(avgLoss)}</span>
+    </div>
+    <div class="annual-summary-item">
+      <span class="annual-summary-label">Profit factor</span>
+      <span class="annual-summary-value">${profitFactor === Infinity ? "∞" : profitFactor.toFixed(2)}</span>
+    </div>
+  `;
+  wrap.appendChild(grid);
+
+  // Détail des trades individuels — caché par défaut pour ne pas allonger la page
+  const toggleBtn = document.createElement("button");
+  toggleBtn.className = "btn-ghost";
+  toggleBtn.style.marginTop = "16px";
+  toggleBtn.textContent = `▸ Afficher le détail des ${trades.length} trades`;
+
+  const listWrap = document.createElement("div");
+  listWrap.style.display = "none";
+  listWrap.style.marginTop = "12px";
+
+  const sorted = trades.slice().sort((a, b) => (b.openDate + b.openTime).localeCompare(a.openDate + a.openTime));
+  sorted.forEach(t => {
+    const row = document.createElement("div");
+    row.className = "bill-row";
+    row.innerHTML = `
+      <span class="bill-desc">${escapeHtml(t.symbol)} — ${escapeHtml(t.side)} ${t.quantity ? "(" + t.quantity + ")" : ""}</span>
+      <span class="bill-due">${t.openDate}</span>
+      <span class="bill-amount ${t.netPnl >= 0 ? 'pos' : 'neg'}">${formatMoney(t.netPnl)}</span>
+    `;
+    const delBtn = document.createElement("button");
+    delBtn.className = "icon-btn";
+    delBtn.textContent = "✕";
+    delBtn.title = "Supprimer ce trade";
+    delBtn.addEventListener("click", () => {
+      appData.trading.trades = appData.trading.trades.filter(x => x.id !== t.id);
+      saveData();
+      renderTradingPanel();
+    });
+    row.appendChild(delBtn);
+    listWrap.appendChild(row);
+  });
+
+  toggleBtn.addEventListener("click", () => {
+    const isOpen = listWrap.style.display !== "none";
+    listWrap.style.display = isOpen ? "none" : "block";
+    toggleBtn.textContent = isOpen ? `▸ Afficher le détail des ${trades.length} trades` : `▾ Masquer le détail des trades`;
+  });
+
+  wrap.appendChild(toggleBtn);
+  wrap.appendChild(listWrap);
+
+  const deleteAllRow = document.createElement("div");
+  deleteAllRow.style.marginTop = "12px";
+  const deleteAllBtn = document.createElement("button");
+  deleteAllBtn.className = "btn-ghost";
+  deleteAllBtn.textContent = `🗑 Supprimer tous les trades de ce compte (${trades.length})`;
+  let deleteAllPending = false;
+  deleteAllBtn.addEventListener("click", () => {
+    if (!deleteAllPending) {
+      deleteAllPending = true;
+      deleteAllBtn.textContent = `Confirmer — supprimer les ${trades.length} trades ?`;
+      deleteAllBtn.classList.add("btn-danger-confirm");
+      return;
+    }
+    appData.trading.trades = appData.trading.trades.filter(t => t.account !== accountName);
+    saveData();
+    renderTradingPanel();
+  });
+  deleteAllRow.appendChild(deleteAllBtn);
+  wrap.appendChild(deleteAllRow);
+
+  return wrap;
+}
+
+function buildDepositWithdrawalRow(label, total, type, accountName, isCombined) {
+  const wrap = document.createElement("div");
+
+  const row = document.createElement("div");
+  row.className = "replenish-item replenish-item-expandable";
+  row.innerHTML = `
+    <span class="replenish-label"><span class="expand-arrow">▸</span> ${escapeHtml(label)}</span>
+    <span class="replenish-value ${type === "depot" ? "pos" : "neg"}">${type === "depot" ? formatMoney(total) : formatMoney(-total)}</span>
+  `;
+
+  const detail = document.createElement("div");
+  detail.className = "category-detail-list";
+  detail.style.display = "none";
+
+  const entries = (isCombined ? appData.trading.movements : appData.trading.movements.filter(m => m.account === accountName))
+    .filter(m => m.type === type)
+    .sort((a, b) => b.date.localeCompare(a.date));
+
+  if (entries.length === 0) {
+    detail.innerHTML = '<p class="empty-msg" style="padding:4px 0;">Aucun mouvement.</p>';
+  } else {
+    entries.forEach(m => {
+      const drow = document.createElement("div");
+      drow.className = "category-detail-row";
+      drow.innerHTML = `
+        <span class="category-detail-name">${m.date}${m.note ? " — " + escapeHtml(m.note) : ""}${isCombined ? " (" + escapeHtml(m.account) + ")" : ""}</span>
+        <span class="category-detail-amount ${type === "depot" ? "pos" : "neg"}">${formatMoney(m.amount)}</span>
+      `;
+      if (!isCombined) {
+        const delBtn = document.createElement("button");
+        delBtn.className = "icon-btn";
+        delBtn.textContent = "✕";
+        delBtn.addEventListener("click", () => {
+          appData.trading.movements = appData.trading.movements.filter(x => x.id !== m.id);
+          saveData();
+          renderTradingPanel();
+        });
+        drow.appendChild(delBtn);
+      }
+      detail.appendChild(drow);
+    });
+  }
+
+  row.addEventListener("click", () => {
+    const isOpen = detail.style.display !== "none";
+    detail.style.display = isOpen ? "none" : "block";
+    row.querySelector(".expand-arrow").textContent = isOpen ? "▸" : "▾";
+  });
+
+  wrap.appendChild(row);
+  wrap.appendChild(detail);
+  return wrap;
+}
+
+function buildAccountOverviewBlock(label, stats, accountName, readOnly) {
+  const block = document.createElement("div");
+  block.className = "category-group-block";
+
+  const title = document.createElement("div");
+  title.className = "category-group-title";
+  title.textContent = "📈 " + label;
+  block.appendChild(title);
+
+  const grid = document.createElement("div");
+  grid.className = "replenish-grid";
+  block.appendChild(grid);
+
+  grid.appendChild(buildDepositWithdrawalRow("Dépôt", stats.totalDeposits, "depot", accountName, readOnly));
+  grid.appendChild(buildDepositWithdrawalRow("Retrait", stats.totalWithdrawals, "retrait", accountName, readOnly));
+
+  const idBase = readOnly ? "combined" : accountName.replace(/[^a-zA-Z0-9]/g, "_");
+
+  const profitRow = document.createElement("div");
+  profitRow.className = "replenish-item";
+  profitRow.innerHTML = `
+    <span class="replenish-label">Profit</span>
+    <span class="replenish-value">${readOnly ? formatMoney(stats.profit) : `<input type="number" step="0.01" class="budget-input inline-money-input" id="profit_${idBase}" value="${stats.profit || ""}" placeholder="0.00">`}</span>
+  `;
+  grid.appendChild(profitRow);
+
+  const swapRow = document.createElement("div");
+  swapRow.className = "replenish-item";
+  swapRow.innerHTML = `
+    <span class="replenish-label">Échange (swap)</span>
+    <span class="replenish-value">${readOnly ? formatMoney(stats.swap) : `<input type="number" step="0.01" class="budget-input inline-money-input" id="swap_${idBase}" value="${stats.swap || ""}" placeholder="0.00">`}</span>
+  `;
+  grid.appendChild(swapRow);
+
+  const commissionRow = document.createElement("div");
+  commissionRow.className = "replenish-item";
+  commissionRow.innerHTML = `
+    <span class="replenish-label">Commission</span>
+    <span class="replenish-value">${readOnly ? formatMoney(stats.commission) : `<input type="number" step="0.01" class="budget-input inline-money-input" id="commission_${idBase}" value="${stats.commission || ""}" placeholder="0.00">`}</span>
+  `;
+  grid.appendChild(commissionRow);
+
+  const soldeRow = document.createElement("div");
+  soldeRow.className = "replenish-item replenish-total replenish-final";
+  soldeRow.innerHTML = `
+    <span class="replenish-label">Solde</span>
+    <span class="replenish-value">${formatMoney(stats.solde)}</span>
+  `;
+  grid.appendChild(soldeRow);
+
+  if (!readOnly) {
+    const note = document.createElement("p");
+    note.className = "categories-intro";
+    note.style.marginTop = "10px";
+    note.textContent = "Solde = Dépôt − Retrait + Profit + Échange − Commission. Entre ces chiffres directement depuis ton relevé MT5.";
+    block.appendChild(note);
+
+    block.querySelector(`#profit_${idBase}`).addEventListener("change", e => {
+      if (!appData.trading.accountStats[accountName]) appData.trading.accountStats[accountName] = { profit: 0, swap: 0, commission: 0 };
+      appData.trading.accountStats[accountName].profit = parseFloat(e.target.value) || 0;
+      saveData();
+      renderTradingPanel();
+    });
+    block.querySelector(`#swap_${idBase}`).addEventListener("change", e => {
+      if (!appData.trading.accountStats[accountName]) appData.trading.accountStats[accountName] = { profit: 0, swap: 0, commission: 0 };
+      appData.trading.accountStats[accountName].swap = parseFloat(e.target.value) || 0;
+      saveData();
+      renderTradingPanel();
+    });
+    block.querySelector(`#commission_${idBase}`).addEventListener("change", e => {
+      if (!appData.trading.accountStats[accountName]) appData.trading.accountStats[accountName] = { profit: 0, swap: 0, commission: 0 };
+      appData.trading.accountStats[accountName].commission = parseFloat(e.target.value) || 0;
+      saveData();
+      renderTradingPanel();
+    });
+  }
+
+  return block;
+}
+
+function buildTradingOverviewCombined() {
+  const combined = computeTradingStatsForAccount(null);
+  const accounts = getKnownTradingAccounts();
+  const label = accounts.length > 1 ? "Vue d'ensemble (tous les comptes)" : "Vue d'ensemble";
+  return buildAccountOverviewBlock(label, combined, null, true);
+}
+
+function buildTradingOverviewForAccount(accountName) {
+  const stats = computeTradingStatsForAccount(accountName);
+  return buildAccountOverviewBlock(accountName, stats, accountName, false);
+}
+
+function buildTradingMovements(accountName) {
+  const wrap = document.createElement("div");
+  wrap.className = "category-group-block";
+  wrap.innerHTML = `<div class="category-group-title">💵 Mouvements (dépôts / retraits)</div>`;
+
+  const list = document.createElement("div");
+  list.className = "bills-list";
+  const movements = appData.trading.movements.filter(m => m.account === accountName).sort((a, b) => b.date.localeCompare(a.date));
+
+  if (movements.length === 0) {
+    list.innerHTML = '<p class="empty-msg" style="padding:4px 0;">Aucun mouvement ajouté pour ce compte.</p>';
+  } else {
+    movements.forEach(m => {
+      const row = document.createElement("div");
+      row.className = "bill-row";
+      const sign = m.type === "depot" ? "pos" : "neg";
+      const label = m.type === "depot" ? "Dépôt" : "Retrait";
+      row.innerHTML = `
+        <span class="bill-desc">${label}${m.note ? " — " + escapeHtml(m.note) : ""}</span>
+        <span class="bill-due">${m.date}</span>
+        <span class="bill-amount ${sign}">${m.type === "depot" ? formatMoney(m.amount) : formatMoney(-m.amount)}</span>
+      `;
+      const delBtn = document.createElement("button");
+      delBtn.className = "icon-btn";
+      delBtn.textContent = "✕";
+      delBtn.title = "Supprimer ce mouvement";
+      delBtn.addEventListener("click", () => {
+        appData.trading.movements = appData.trading.movements.filter(x => x.id !== m.id);
+        saveData();
+        renderTradingPanel();
+      });
+      row.appendChild(delBtn);
+      list.appendChild(row);
+    });
+  }
+  wrap.appendChild(list);
+
+  const addRow = document.createElement("div");
+  addRow.className = "add-bill-row";
+  addRow.innerHTML = `
+    <select id="newMoveType" style="width:100px;">
+      <option value="depot">Dépôt</option>
+      <option value="retrait">Retrait</option>
+    </select>
+    <input type="date" id="newMoveDate">
+    <input type="number" step="0.01" id="newMoveAmount" placeholder="Montant" style="width:110px;">
+    <input type="text" id="newMoveNote" placeholder="Note (optionnel)">
+    <button class="btn-ghost" id="addMoveBtn">+ Ajouter</button>
+  `;
+  wrap.appendChild(addRow);
+
+  wrap.querySelector("#addMoveBtn").addEventListener("click", () => {
+    const type = wrap.querySelector("#newMoveType").value;
+    const date = wrap.querySelector("#newMoveDate").value;
+    const amount = parseFloat(wrap.querySelector("#newMoveAmount").value);
+    const note = wrap.querySelector("#newMoveNote").value.trim();
+    if (!date || !amount || amount <= 0) return;
+    appData.trading.movements.push({ id: uid("move"), date, type, account: accountName, amount: Math.round(amount * 100) / 100, note });
+    saveData();
+    renderTradingPanel();
+  });
+
+  return wrap;
+}
+
+function buildTradingGoals(totals) {
+  const wrap = document.createElement("div");
+  wrap.className = "category-group-block";
+  wrap.innerHTML = `<div class="category-group-title">🎯 Objectifs</div>`;
+
+  TRADING_TERMS.forEach(term => {
+    const section = document.createElement("div");
+    section.style.marginTop = "16px";
+    section.innerHTML = `<h4 class="budget-subheading" style="margin-top:0;">${term.label}</h4>`;
+
+    const goals = appData.trading.goals.filter(g => g.term === term.key);
+    if (goals.length === 0) {
+      section.innerHTML += '<p class="empty-msg" style="padding:2px 0;">Aucun objectif.</p>';
+    } else {
+      goals.forEach(g => {
+        const pct = g.targetAmount > 0 ? Math.min(100, (totals.currentValue / g.targetAmount) * 100) : 0;
+        const card = document.createElement("div");
+        card.className = "goal-card";
+        card.innerHTML = `
+          <div class="goal-card-header">
+            <span class="goal-title">${escapeHtml(g.title)}</span>
+            <span class="goal-target">${formatMoney(g.targetAmount)}${g.targetDate ? " — " + g.targetDate : ""}</span>
+          </div>
+          <div class="goal-progress-track">
+            <div class="goal-progress-fill" style="width:${pct}%;"></div>
+          </div>
+          <div class="goal-progress-label">${pct.toFixed(0)}% atteint (${formatMoney(totals.currentValue)} / ${formatMoney(g.targetAmount)})</div>
+          ${g.note ? `<div class="goal-note">${escapeHtml(g.note)}</div>` : ""}
+        `;
+        const delBtn = document.createElement("button");
+        delBtn.className = "icon-btn";
+        delBtn.textContent = "✕";
+        delBtn.title = "Supprimer cet objectif";
+        delBtn.addEventListener("click", () => {
+          appData.trading.goals = appData.trading.goals.filter(x => x.id !== g.id);
+          saveData();
+          renderTradingPanel();
+        });
+        card.appendChild(delBtn);
+        section.appendChild(card);
+      });
+    }
+
+    const addRow = document.createElement("div");
+    addRow.className = "add-bill-row";
+    addRow.style.marginTop = "8px";
+    addRow.innerHTML = `
+      <input type="text" class="newGoalTitle" placeholder="Titre (ex: Fonds d'urgence trading)">
+      <input type="number" step="0.01" class="newGoalAmount" placeholder="Montant cible" style="width:120px;">
+      <input type="date" class="newGoalDate">
+      <button class="btn-ghost addGoalBtn">+ Ajouter</button>
+    `;
+    section.appendChild(addRow);
+
+    addRow.querySelector(".addGoalBtn").addEventListener("click", () => {
+      const title = addRow.querySelector(".newGoalTitle").value.trim();
+      const targetAmount = parseFloat(addRow.querySelector(".newGoalAmount").value);
+      const targetDate = addRow.querySelector(".newGoalDate").value;
+      if (!title || !targetAmount || targetAmount <= 0) return;
+      appData.trading.goals.push({ id: uid("goal"), term: term.key, title, targetAmount: Math.round(targetAmount * 100) / 100, targetDate: targetDate || "", note: "" });
+      saveData();
+      renderTradingPanel();
+    });
+
+    wrap.appendChild(section);
+  });
+
+  return wrap;
 }
 
 /* ===================== Import ===================== */
@@ -1897,11 +2758,266 @@ function escapeHtml(str) {
 
 const BUDGETABLE_GROUPS = ["besoins", "envies", "epargne"];
 
+function computeReplenishment() {
+  const currentYm = currentYearMonth();
+  const completeMonthsTxs = appData.transactions.filter(t => t.date.slice(0, 7) !== currentYm);
+  const s = summarize(completeMonthsTxs);
+  const monthsSet = new Set(completeMonthsTxs.map(t => t.date.slice(0, 7)));
+  const monthsCount = Math.max(1, monthsSet.size);
+  const avgDepenses = s.totalDepenses / monthsCount;
+
+  let autresRevenusTotal = 0;
+  Object.entries(s.byCategory).forEach(([id, amt]) => {
+    const cat = categoryById(id);
+    if (cat.group !== "revenu") return;
+    const normalizedName = cat.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    if (normalizedName.includes("renflouement")) return; // exclu : c'est justement ce qu'on calcule
+    autresRevenusTotal += amt;
+  });
+  const avgAutresRevenus = autresRevenusTotal / monthsCount;
+
+  const cushion = appData.cushionAmount || 0;
+  const total = avgDepenses - avgAutresRevenus + cushion;
+
+  return { avgDepenses, avgAutresRevenus, cushion, total, monthsCount };
+}
+
+function buildReplenishmentSection(r, historicalAvg) {
+  const wrap = document.createElement("div");
+  wrap.className = "category-group-block";
+
+  const cp = appData.cashPosition;
+  const soldeDisponible = (cp.currentBalance || 0) - (cp.reserved || 0);
+  const montantAAjouter = Math.max(0, r.total - soldeDisponible);
+  const surplus = soldeDisponible - r.total;
+
+  wrap.innerHTML = `
+    <div class="category-group-title">💰 Renflouement du 20 du mois</div>
+    <div class="category-group-sub">Basé sur ${r.monthsCount} mois de données — une seule réponse : combien ajouter dans le compte commun le 20.</div>
+
+    <h4 class="budget-subheading">1. Besoin total du mois</h4>
+    <div class="replenish-grid">
+      <div class="replenish-item replenish-item-expandable" id="depensesRow">
+        <span class="replenish-label"><span class="expand-arrow">▸</span> Dépenses moyennes mensuelles</span>
+        <span class="replenish-value neg">${formatMoney(r.avgDepenses)}</span>
+      </div>
+      <div class="category-detail-list" id="depensesDetail" style="display:none;"></div>
+      <div class="replenish-item">
+        <span class="replenish-label">− Autres revenus automatiques (allocations, remises, etc.)</span>
+        <span class="replenish-value pos">${formatMoney(r.avgAutresRevenus)}</span>
+      </div>
+      <div class="replenish-item">
+        <span class="replenish-label">+ Coussin de sécurité</span>
+        <span class="replenish-value">${formatMoney(r.cushion)}</span>
+      </div>
+      <div class="replenish-item replenish-total">
+        <span class="replenish-label">Besoin total pour le mois</span>
+        <span class="replenish-value">${formatMoney(r.total)}</span>
+      </div>
+    </div>
+    <div class="budget-input-wrap" style="margin-top:10px;">
+      <label style="font-size:12px; color:var(--muted); margin-right:8px;">Ajuster le coussin de sécurité :</label>
+      <input type="number" step="10" min="0" class="budget-input" id="cushionInput" value="${appData.cushionAmount || 0}">
+    </div>
+
+    <h4 class="budget-subheading">2. Ce qui est déjà disponible</h4>
+    <div class="cash-position-inputs">
+      <div class="field">
+        <label>Solde actuel du compte</label>
+        <input type="number" step="0.01" class="budget-input" id="cpCurrentBalance" value="${cp.currentBalance || ""}" placeholder="ex: 4407.64">
+      </div>
+      <div class="field">
+        <label>Montant réservé (non disponible)</label>
+        <input type="number" step="0.01" class="budget-input" id="cpReserved" value="${cp.reserved || ""}" placeholder="ex: 700">
+      </div>
+    </div>
+    <div class="replenish-grid" style="margin-top:10px;">
+      <div class="replenish-item">
+        <span class="replenish-label">Solde disponible</span>
+        <span class="replenish-value ${soldeDisponible >= 0 ? 'pos' : 'neg'}">${formatMoney(soldeDisponible)}</span>
+      </div>
+    </div>
+
+    <h4 class="budget-subheading">3. La réponse</h4>
+    <div class="replenish-grid">
+      <div class="replenish-item replenish-total replenish-final">
+        <span class="replenish-label">${montantAAjouter > 0 ? "À ajouter dans le compte le 20" : "Déjà assez dans le compte ✅"}</span>
+        <span class="replenish-value">${montantAAjouter > 0 ? formatMoney(montantAAjouter) : formatMoney(0)}</span>
+      </div>
+      ${montantAAjouter === 0 && surplus > 0 ? `<p class="empty-msg" style="padding-top:6px;">Surplus actuel : ${formatMoney(surplus)}</p>` : ""}
+    </div>
+  `;
+
+  const detail = wrap.querySelector("#depensesDetail");
+  const expenseEntries = Object.entries(historicalAvg)
+    .filter(([id, amt]) => {
+      const cat = categoryById(id);
+      return ["besoins", "envies", "epargne", "non_classe"].includes(cat.group) && amt < 0;
+    })
+    .sort((a, b) => a[1] - b[1]); // le plus cher (le plus négatif) en premier
+
+  if (expenseEntries.length === 0) {
+    detail.innerHTML = '<p class="empty-msg" style="padding:4px 0;">Pas encore de dépenses classées.</p>';
+  } else {
+    expenseEntries.forEach(([id, amt]) => {
+      const cat = categoryById(id);
+      const row = document.createElement("div");
+      row.className = "category-detail-row category-detail-row-expandable";
+      row.innerHTML = `
+        <span class="expand-arrow-sm">▸</span>
+        <span class="category-detail-name">${escapeHtml(cat.name)}</span>
+        <span class="category-detail-amount neg">${formatMoney(amt)}</span>
+      `;
+
+      const subDetail = document.createElement("div");
+      subDetail.className = "category-subdetail-list";
+      subDetail.style.display = "none";
+
+      const byDesc = averageByDescriptionForCategory(cat.id, r.monthsCount);
+      const descEntries = Object.entries(byDesc).sort((a, b) => a[1] - b[1]);
+      if (descEntries.length === 0) {
+        subDetail.innerHTML = '<p class="empty-msg" style="padding:2px 0; font-size:11px;">Aucun détail disponible.</p>';
+      } else {
+        descEntries.forEach(([desc, damt]) => {
+          const drow = document.createElement("div");
+          drow.className = "category-subdetail-row";
+          drow.innerHTML = `
+            <span class="category-detail-name">${escapeHtml(desc)}</span>
+            <span class="category-detail-amount neg">${formatMoney(damt)}</span>
+          `;
+          subDetail.appendChild(drow);
+        });
+      }
+
+      row.addEventListener("click", () => {
+        const isOpen = subDetail.style.display !== "none";
+        subDetail.style.display = isOpen ? "none" : "block";
+        row.querySelector(".expand-arrow-sm").textContent = isOpen ? "▸" : "▾";
+      });
+
+      detail.appendChild(row);
+      detail.appendChild(subDetail);
+    });
+  }
+
+  wrap.querySelector("#depensesRow").addEventListener("click", () => {
+    const isOpen = detail.style.display !== "none";
+    detail.style.display = isOpen ? "none" : "block";
+    wrap.querySelector("#depensesRow .expand-arrow").textContent = isOpen ? "▸" : "▾";
+  });
+
+  wrap.querySelector("#cushionInput").addEventListener("change", e => {
+    const val = parseFloat(e.target.value);
+    appData.cushionAmount = isNaN(val) ? 0 : Math.round(val * 100) / 100;
+    saveData();
+    renderBudgetPanel();
+  });
+
+  wrap.querySelector("#cpCurrentBalance").addEventListener("change", e => {
+    appData.cashPosition.currentBalance = parseFloat(e.target.value) || 0;
+    saveData();
+    renderBudgetPanel();
+  });
+  wrap.querySelector("#cpReserved").addEventListener("change", e => {
+    appData.cashPosition.reserved = parseFloat(e.target.value) || 0;
+    saveData();
+    renderBudgetPanel();
+  });
+
+  return wrap;
+}
+
+function buildIncomeSplitSection(totalToReplenish) {
+  const wrap = document.createElement("div");
+  wrap.className = "category-group-block";
+
+  const split = appData.incomeSplit;
+  const bw1 = split.person1.biweekly || 0;
+  const bw2 = split.person2.biweekly || 0;
+  const totalBiweekly = bw1 + bw2;
+  const ratio1 = totalBiweekly > 0 ? bw1 / totalBiweekly : 0.5;
+  const ratio2 = totalBiweekly > 0 ? bw2 / totalBiweekly : 0.5;
+
+  wrap.innerHTML = `
+    <div class="category-group-title">🤝 Répartition selon les salaires</div>
+    <div class="category-group-sub">Entrez vos salaires nets reçus aux 2 semaines — la répartition du renflouement s'ajuste automatiquement selon le ratio de vos revenus.</div>
+    <div class="income-split-rows">
+      <div class="income-split-row">
+        <input type="text" class="income-name-input" id="incomeName1" value="${escapeHtml(split.person1.name)}">
+        <input type="number" step="10" min="0" class="budget-input" id="incomeSalary1" placeholder="Salaire aux 2 sem." value="${bw1 || ""}">
+      </div>
+      <div class="income-split-row">
+        <input type="text" class="income-name-input" id="incomeName2" value="${escapeHtml(split.person2.name)}">
+        <input type="number" step="10" min="0" class="budget-input" id="incomeSalary2" placeholder="Salaire aux 2 sem." value="${bw2 || ""}">
+      </div>
+    </div>
+  `;
+
+  const resultDiv = document.createElement("div");
+  resultDiv.className = "replenish-grid";
+  resultDiv.style.marginTop = "14px";
+  resultDiv.innerHTML = `
+    <div class="replenish-item">
+      <span class="replenish-label">${escapeHtml(split.person1.name)} (${(ratio1 * 100).toFixed(0)}%)</span>
+      <span class="replenish-value pos">${formatMoney(totalToReplenish * ratio1)}</span>
+    </div>
+    <div class="replenish-item">
+      <span class="replenish-label">${escapeHtml(split.person2.name)} (${(ratio2 * 100).toFixed(0)}%)</span>
+      <span class="replenish-value pos">${formatMoney(totalToReplenish * ratio2)}</span>
+    </div>
+  `;
+  wrap.appendChild(resultDiv);
+
+  wrap.querySelector("#incomeName1").addEventListener("change", e => {
+    appData.incomeSplit.person1.name = e.target.value.trim() || "Personne 1";
+    saveData();
+    renderBudgetPanel();
+  });
+  wrap.querySelector("#incomeName2").addEventListener("change", e => {
+    appData.incomeSplit.person2.name = e.target.value.trim() || "Personne 2";
+    saveData();
+    renderBudgetPanel();
+  });
+  wrap.querySelector("#incomeSalary1").addEventListener("change", e => {
+    appData.incomeSplit.person1.biweekly = parseFloat(e.target.value) || 0;
+    saveData();
+    renderBudgetPanel();
+  });
+  wrap.querySelector("#incomeSalary2").addEventListener("change", e => {
+    appData.incomeSplit.person2.biweekly = parseFloat(e.target.value) || 0;
+    saveData();
+    renderBudgetPanel();
+  });
+
+  return wrap;
+}
+
 function renderBudgetPanel() {
   const container = document.getElementById("budgetContent");
   container.innerHTML = "";
 
   const { avg: historicalAvg, monthsCount } = averageByCategory(appData.transactions);
+
+  const replenishInfo = computeReplenishment();
+  container.appendChild(buildReplenishmentSection(replenishInfo, historicalAvg));
+
+  const cp = appData.cashPosition;
+  const soldeDisponible = (cp.currentBalance || 0) - (cp.reserved || 0);
+  const montantAAjouter = Math.max(0, replenishInfo.total - soldeDisponible);
+  container.appendChild(buildIncomeSplitSection(montantAAjouter));
+
+  const resetAllRow = document.createElement("div");
+  resetAllRow.style.cssText = "margin-bottom:16px;";
+  const resetAllBtn = document.createElement("button");
+  resetAllBtn.className = "btn-ghost";
+  resetAllBtn.textContent = "↺ Utiliser la moyenne partout (réinitialiser toutes les catégories)";
+  resetAllBtn.addEventListener("click", () => {
+    appData.budgets = {};
+    saveData();
+    renderBudgetPanel();
+  });
+  resetAllRow.appendChild(resetAllBtn);
+  container.appendChild(resetAllRow);
 
   BUDGETABLE_GROUPS.forEach(groupKey => {
     const meta = GROUP_META[groupKey];
@@ -2408,22 +3524,25 @@ function drawAnnualReport(year) {
   content.innerHTML = "";
 
   const averagesInfo = averageByCategory(txs);
+  const currentYm = currentYearMonth();
+  const completeMonthsTxsForYear = txs.filter(t => t.date.slice(0, 7) !== currentYm);
+  const completeMonthsTotalDepenses = summarize(completeMonthsTxsForYear).totalDepenses;
 
   content.appendChild(buildSummaryCards(s, txs));
-  content.appendChild(buildAnnualExpenseSummary(s, averagesInfo.monthsCount));
+  content.appendChild(buildAnnualExpenseSummary(s, averagesInfo.monthsCount, completeMonthsTotalDepenses));
   content.appendChild(build503020Section(s));
   content.appendChild(buildMonthlyTrend(year));
   content.appendChild(buildSubscriptionsHighlight(txs));
   content.appendChild(buildCategoryBreakdown(s, txs, { averagesInfo }));
 }
 
-function buildAnnualExpenseSummary(s, monthsCount) {
+function buildAnnualExpenseSummary(s, monthsCount, completeMonthsTotalDepenses) {
   const wrap = document.createElement("div");
   wrap.className = "section-block";
   wrap.innerHTML = "<h3>Combien on a besoin par mois</h3>";
 
   const totalAnnuel = s.totalDepenses;
-  const moyenneMensuelle = monthsCount > 0 ? totalAnnuel / monthsCount : 0;
+  const moyenneMensuelle = monthsCount > 0 ? completeMonthsTotalDepenses / monthsCount : 0;
   const projectionAnnuelle = moyenneMensuelle * 12;
   const difference = projectionAnnuelle - totalAnnuel;
 
@@ -2431,11 +3550,11 @@ function buildAnnualExpenseSummary(s, monthsCount) {
   grid.className = "annual-summary-grid";
   grid.innerHTML = `
     <div class="annual-summary-item">
-      <span class="annual-summary-label">Total dépensé cette année (${monthsCount} mois de données)</span>
+      <span class="annual-summary-label">Total dépensé cette année (à ce jour)</span>
       <span class="annual-summary-value neg">${formatMoney(totalAnnuel)}</span>
     </div>
     <div class="annual-summary-item">
-      <span class="annual-summary-label">Moyenne mensuelle des dépenses</span>
+      <span class="annual-summary-label">Moyenne mensuelle des dépenses (${monthsCount} mois complets)</span>
       <span class="annual-summary-value neg">${formatMoney(moyenneMensuelle)}</span>
     </div>
     <div class="annual-summary-item">
@@ -2448,6 +3567,11 @@ function buildAnnualExpenseSummary(s, monthsCount) {
     </div>
   `;
   wrap.appendChild(grid);
+
+  const monthNote = document.createElement("p");
+  monthNote.style.cssText = "font-size:12px; color:var(--muted); margin-top:10px;";
+  monthNote.textContent = "Le mois calendaire en cours est toujours exclu de la moyenne (incomplet), même si tu as déjà importé certaines de ses transactions.";
+  wrap.appendChild(monthNote);
 
   if (monthsCount >= 12) {
     const note = document.createElement("p");
@@ -2646,6 +3770,15 @@ async function init() {
 
   document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+  });
+
+  document.querySelectorAll(".outil-btn").forEach(btn => {
+    btn.addEventListener("click", () => switchOutil(btn.dataset.outil));
+  });
+
+  document.getElementById("tradeZellaCsvFile").addEventListener("change", e => {
+    if (e.target.files.length) handleTradeZellaCsv(e.target.files[0]);
+    e.target.value = "";
   });
 
   document.getElementById("filterMonth").addEventListener("change", renderTransactionsTable);
